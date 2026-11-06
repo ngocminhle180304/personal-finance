@@ -1,0 +1,8 @@
+# Không bao giờ commit token / cấu hình cá nhân
+.env
+*.local
+.clasprc.json
+.clasp.json
+node_modules/
+.DS_Store
+*.bak
