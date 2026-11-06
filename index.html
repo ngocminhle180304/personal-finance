@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>Tài chính cá nhân</title>
+<style>
+:root{--bg:#f3f6f8;--card:#fff;--tx:#14202b;--mut:#6b7885;--bd:#e3e8ee;--pri:#0f766e;--onpri:#fff;--inc:#16a34a;--exp:#dc2626;--warn:#d97706;--sh:0 1px 3px rgba(0,0,0,.08);--inp:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1318;--card:#17202a;--tx:#e8eef3;--mut:#8a99a8;--bd:#263340;--pri:#2dd4bf;--onpri:#06231f;--inc:#4ade80;--exp:#f87171;--warn:#fbbf24;--sh:none;--inp:#101820}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:90px}
+h1,h2,h3{margin:0}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--bd)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;max-width:1100px;margin:auto}
+.top h1{font-size:17px}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;max-width:1100px;margin:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:0;background:transparent;color:var(--mut);padding:7px 12px;border-radius:99px;font:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--pri);color:var(--onpri)}
+main{max-width:1100px;margin:14px auto;padding:0 12px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;box-shadow:var(--sh)}
+.card h3{font-size:14px;color:var(--mut);font-weight:600;margin-bottom:8px}
+.big{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.mid{font-size:19px;font-weight:700}
+.mut{color:var(--mut);font-size:13px}
+.inc{color:var(--inc)}.exp{color:var(--exp)}.warn{color:var(--warn)}
+.row{display:flex;gap:8px;align-items:center}
+.sp{justify-content:space-between}
+.end{justify-content:flex-end}
+.wrap{flex-wrap:wrap}
+.btn{border:0;background:var(--pri);color:var(--onpri);padding:9px 14px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.danger{background:var(--exp);color:#fff}
+input,select,textarea{width:100%;font:inherit;color:var(--tx);background:var(--inp);border:1px solid var(--bd);border-radius:10px;padding:9px 10px}
+.inline{width:auto}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--bd);cursor:pointer}
+.item:last-child{border-bottom:0}
+.item .l{min-width:0}
+.item .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .r{text-align:right;white-space:nowrap;font-weight:700}
+.day{font-size:12px;color:var(--mut);font-weight:700;margin:12px 4px 2px;text-transform:uppercase}
+.bar{height:8px;border-radius:99px;background:var(--bd);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--pri);border-radius:99px}
+.bar i.over{background:var(--exp)}.bar i.near{background:var(--warn)}
+.chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--bd);color:var(--mut)}
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;border:0;background:var(--pri);color:var(--onpri);font-size:30px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:30}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:50}
+#modal.open{display:flex}
+.sheet{background:var(--card);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px}
+@media(min-width:600px){#modal{align-items:center}.sheet{border-radius:18px}}
+.sheet form .row{margin-top:16px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:9px 16px;border-radius:99px;font-size:14px;z-index:60;display:none;max-width:90%}
+#toast.err{background:var(--exp)}
+.chartbox{position:relative;height:260px}
+.empty{text-align:center;color:var(--mut);padding:26px 8px}
+.loading{position:fixed;top:0;left:0;right:0;height:3px;background:var(--pri);z-index:99;display:none;animation:ld 1s infinite}
+@keyframes ld{0%{transform:scaleX(.05);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}100%{transform:scaleX(0);transform-origin:right}}
+.mnav{display:flex;align-items:center;gap:6px}
+.mnav input{width:auto}
+</style>
+</head>
+<body>
+<div class="loading" id="loading"></div>
+<header>
+  <div class="top">
+    <h1>💰 Tài chính cá nhân</h1>
+    <div class="row"><span class="mut" id="sync"></span><button class="btn ghost sm" id="btnReload" title="Tải lại dữ liệu">⟳</button></div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main id="view"></main>
+<button class="fab" id="fab" title="Thêm giao dịch">+</button>
+<div id="modal"></div>
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+/* ============ CẤU HÌNH ============ */
+// (Tùy chọn) dán URL Web App vào đây để khỏi nhập lại ở mỗi thiết bị. Token thì KHÔNG nên ghi vào code.
+const DEFAULT_API_URL = '';
+
+/* ============ TIỆN ÍCH ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf = new Intl.NumberFormat('vi-VN');
+const vnd = n => nf.format(Math.round(n || 0)) + ' ₫';
+const num = x => Number(x) || 0;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const pad = n => String(n).padStart(2, '0');
+const todayStr = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+const ACC_TYPES = { bank: 'Ngân hàng', cash: 'Tiền mặt', ewallet: 'Ví điện tử', invest: 'Đầu tư', credit: 'Thẻ tín dụng', other: 'Khác' };
+const ACC_ICON = { bank: '🏦', cash: '💵', ewallet: '📱', invest: '📈', credit: '💳', other: '👛' };
+const KEYS = ['Accounts', 'Categories', 'Transactions', 'Debts', 'DebtPayments', 'Budgets', 'Recurring'];
+
+let cfg = JSON.parse(localStorage.getItem('fin_cfg') || '{}');
+if (!cfg.url && DEFAULT_API_URL) cfg.url = DEFAULT_API_URL;
+let S = {}; KEYS.forEach(k => S[k] = []);
+const ui = { view: 'dash', month: todayStr().slice(0, 7), f: { acc: '', type: '', q: '' } };
+let charts = [];
+
+/* ============ API ============ */
+let busy = 0;
+function spin(on) { busy += on ? 1 : -1; $('#loading').style.display = busy > 0 ? 'block' : 'none'; }
+async function api(action, payload = {}) {
+  if (!cfg.url || !cfg.token) throw new Error('Chưa cấu hình URL / token');
+  spin(true);
+  try {
+    const res = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ token: cfg.token, action, ...payload }) });
+    const j = await res.json();
+    if (!j.ok) throw new Error(j.error || 'Lỗi không xác định');
+    return j.data;
+  } finally { spin(false); }
+}
+function toast(msg, err) {
+  const t = $('#toast'); t.textContent = msg; t.className = err ? 'err' : ''; t.style.display = 'block';
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = 'none', err ? 4500 : 2200);
+}
+function persist() { try { localStorage.setItem('fin_cache', JSON.stringify(S)); } catch (e) {} }
+
+async function loadAll(silent) {
+  try {
+    const d = await api('getAll');
+    KEYS.forEach(k => S[k] = d[k] || []);
+    persist();
+    $('#sync').textContent = 'Đã đồng bộ ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    render();
+  } catch (e) { if (!silent) toast(e.message, true); $('#sync').textContent = 'Offline'; }
+}
+async function save(sheet, row) {
+  await api('upsert', { sheet, row });
+  const arr = S[sheet], i = arr.findIndex(x => x.id === row.id);
+  if (i >= 0) arr[i] = row; else arr.push(row);
+  persist(); render();
+}
+async function del(sheet, id) {
+  await api('delete', { sheet, id });
+  S[sheet] = S[sheet].filter(x => x.id !== id);
+  if (sheet === 'Debts') S.DebtPayments = S.DebtPayments.filter(p => p.debt_id !== id);
+  persist(); render();
+}
+
+/* ============ TÍNH TOÁN ============ */
+const accById = id => S.Accounts.find(a => a.id === id);
+const debtById = id => S.Debts.find(d => d.id === id);
+const activeAccs = () => S.Accounts.filter(a => num(a.active) !== 0 || a.active === '' );
+const catsOf = type => S.Categories.filter(c => c.type === type).map(c => c.name);
+
+function balances() {
+  const b = {}; S.Accounts.forEach(a => b[a.id] = num(a.initial_balance));
+  const add = (id, v) => { if (id in b) b[id] += v; };
+  S.Transactions.forEach(t => {
+    const m = num(t.amount);
+    if (t.type === 'income') add(t.account_id, m);
+    else if (t.type === 'expense') add(t.account_id, -m);
+    else if (t.type === 'transfer') { add(t.account_id, -m); add(t.to_account_id, m); }
+  });
+  S.Debts.forEach(d => { if (d.account_id) add(d.account_id, d.direction === 'lend' ? -num(d.amount) : num(d.amount)); });
+  S.DebtPayments.forEach(p => { const d = debtById(p.debt_id); if (d && p.account_id) add(p.account_id, d.direction === 'lend' ? num(p.amount) : -num(p.amount)); });
+  return b;
+}
+function debtPaid(id) { return S.DebtPayments.filter(p => p.debt_id === id).reduce((s, p) => s + num(p.amount), 0); }
+function debtLeft(d) { return Math.max(0, num(d.amount) - debtPaid(d.id)); }
+function debtTotals() {
+  let recv = 0, pay = 0;
+  S.Debts.forEach(d => { if (d.direction === 'lend') recv += debtLeft(d); else pay += debtLeft(d); });
+  return { recv, pay };
+}
+function monthStats(prefix) {
+  let inc = 0, exp = 0;
+  S.Transactions.forEach(t => {
+    if (!String(t.date).startsWith(prefix)) return;
+    if (t.type === 'income') inc += num(t.amount); else if (t.type === 'expense') exp += num(t.amount);
+  });
+  return { inc, exp };
+}
+function spentByCat(prefix) {
+  const m = {};
+  S.Transactions.forEach(t => { if (t.type === 'expense' && String(t.date).startsWith(prefix)) m[t.category] = (m[t.category] || 0) + num(t.amount); });
+  return m;
+}
+
+/* ============ MODAL FORM ============ */
+function closeModal() { $('#modal').classList.remove('open'); $('#modal').innerHTML = ''; }
+function fieldHtml(f, val, ctx) {
+  const v = val ?? f.def ?? '';
+  let inp;
+  if (f.type === 'select') inp = `<select name="${f.k}">${optHtml(f.optsFn ? f.optsFn(ctx || {}) : (f.opts || []), v)}</select>`;
+  else if (f.type === 'textarea') inp = `<textarea name="${f.k}" rows="2">${esc(v)}</textarea>`;
+  else inp = `<input name="${f.k}" type="${f.type || 'text'}" value="${esc(v)}" ${f.type === 'number' ? 'inputmode="decimal" step="any"' : ''} ${f.ph ? `placeholder="${esc(f.ph)}"` : ''}>`;
+  return `<div data-fk="${f.k}"><label>${esc(f.label)}${f.req ? ' *' : ''}</label>${inp}</div>`;
+}
+function optHtml(opts, v) { return opts.map(o => `<option value="${esc(o.v)}" ${String(o.v) === String(v) ? 'selected' : ''}>${esc(o.l)}</option>`).join(''); }
+
+function openForm({ title, fields, values = {}, onSave, onDelete, saveLabel }) {
+  const m = $('#modal');
+  const ctx0 = Object.fromEntries(fields.map(x => [x.k, values[x.k] ?? x.def ?? '']));
+  m.innerHTML = `<div class="sheet"><h3 style="margin-bottom:4px">${esc(title)}</h3><form id="f" autocomplete="off">${fields.map(f => fieldHtml(f, values[f.k], ctx0)).join('')}
+    <div class="row sp"><div>${onDelete ? '<button type="button" class="btn danger" data-del>Xóa</button>' : ''}</div>
+    <div class="row"><button type="button" class="btn ghost" data-close>Hủy</button><button class="btn" type="submit">${saveLabel || 'Lưu'}</button></div></div></form></div>`;
+  m.classList.add('open');
+  const form = $('#f');
+  const read = () => {
+    const v = {};
+    fields.forEach(f => {
+      const el = form.elements[f.k]; if (!el) return;
+      const wrap = form.querySelector(`[data-fk="${f.k}"]`);
+      const hidden = wrap.style.display === 'none';
+      v[f.k] = hidden ? '' : (f.type === 'number' ? (el.value === '' ? '' : Number(el.value)) : el.value.trim());
+    });
+    return v;
+  };
+  const sig = {};
+  const upd = () => {
+    const raw = {}; fields.forEach(f => { const el = form.elements[f.k]; if (el) raw[f.k] = f.type === 'number' ? el.value : el.value; });
+    fields.forEach(f => {
+      const wrap = form.querySelector(`[data-fk="${f.k}"]`);
+      if (f.optsFn) {
+        const opts = f.optsFn(raw), s = JSON.stringify(opts);
+        if (sig[f.k] !== s) { const cur = form.elements[f.k].value; form.elements[f.k].innerHTML = optHtml(opts, cur); sig[f.k] = s; }
+      }
+      if (f.show) wrap.style.display = f.show(raw) ? '' : 'none';
+      if (f.label2) wrap.querySelector('label').textContent = f.label2(raw);
+    });
+  };
+  fields.forEach(f => { if (f.optsFn) sig[f.k] = JSON.stringify(f.optsFn(ctx0)); });
+  form.addEventListener('input', upd); form.addEventListener('change', upd); upd();
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const v = read();
+    for (const f of fields) {
+      const wrap = form.querySelector(`[data-fk="${f.k}"]`);
+      if (f.req && wrap.style.display !== 'none' && (v[f.k] === '' || v[f.k] === undefined)) { toast('Vui lòng nhập: ' + f.label, true); return; }
+    }
+    try { await onSave(v); closeModal(); toast('Đã lưu'); } catch (err) { toast(err.message, true); }
+  };
+  const d = form.querySelector('[data-del]');
+  if (d) d.onclick = async () => { if (!confirm('Xóa mục này?')) return; try { await onDelete(); closeModal(); toast('Đã xóa'); } catch (err) { toast(err.message, true); } };
+}
+document.addEventListener('click', e => {
+  if (e.target.matches('[data-close]') || e.target.id === 'modal') closeModal();
+});
+
+const accOpts = (blank) => { const o = activeAccs().map(a => ({ v: a.id, l: (ACC_ICON[a.type] || '') + ' ' + a.name })); return blank ? [{ v: '', l: blank }, ...o] : o; };
+
+/* ============ FORMS ============ */
+function txForm(t) {
+  if (!activeAccs().length) { toast('Hãy tạo tài khoản trước', true); go('acc'); return; }
+  const isNew = !t;
+  t = t || { id: uid(), date: todayStr(), type: 'expense', account_id: activeAccs()[0].id };
+  openForm({
+    title: isNew ? 'Thêm giao dịch' : 'Sửa giao dịch', values: t,
+    fields: [
+      { k: 'type', label: 'Loại', type: 'select', opts: [{ v: 'expense', l: 'Chi tiêu' }, { v: 'income', l: 'Thu nhập' }, { v: 'transfer', l: 'Chuyển khoản giữa tài khoản' }] },
+      { k: 'amount', label: 'Số tiền (₫)', type: 'number', req: true },
+      { k: 'date', label: 'Ngày', type: 'date', req: true },
+      { k: 'account_id', label: 'Tài khoản', type: 'select', opts: accOpts(), label2: v => v.type === 'transfer' ? 'Từ tài khoản' : 'Tài khoản' },
+      { k: 'to_account_id', label: 'Đến tài khoản', type: 'select', opts: accOpts(), show: v => v.type === 'transfer', req: true },
+      { k: 'category', label: 'Danh mục', type: 'select', show: v => v.type !== 'transfer', optsFn: v => catsOf(v.type === 'income' ? 'income' : 'expense').map(c => ({ v: c, l: c })), req: true },
+      { k: 'note', label: 'Ghi chú', type: 'textarea' }
+    ],
+    onSave: async v => {
+      if (v.type === 'transfer' && v.account_id === v.to_account_id) throw new Error('Hai tài khoản phải khác nhau');
+      await save('Transactions', { ...t, ...v, created_at: t.created_at || new Date().toISOString().slice(0, 19) });
+    },
+    onDelete: isNew ? null : () => del('Transactions', t.id)
+  });
+}
+function accForm(a) {
+  const isNew = !a; a = a || { id: uid(), type: 'bank', initial_balance: 0, currency: 'VND', active: 1 };
+  openForm({
+    title: isNew ? 'Thêm tài khoản' : 'Sửa tài khoản', values: a,
+    fields: [
+      { k: 'name', label: 'Tên (VD: MB Bank, Techcombank, Tiền mặt)', req: true },
+      { k: 'type', label: 'Loại', type: 'select', opts: Object.entries(ACC_TYPES).map(([v, l]) => ({ v, l })) },
+      { k: 'initial_balance', label: 'Số dư ban đầu (₫) — thẻ tín dụng nhập số âm nếu đang dư nợ', type: 'number' },
+      { k: 'active', label: 'Trạng thái', type: 'select', opts: [{ v: 1, l: 'Đang dùng' }, { v: 0, l: 'Ẩn (đã đóng)' }] },
+      { k: 'note', label: 'Ghi chú', type: 'textarea' }
+    ],
+    onSave: v => save('Accounts', { ...a, ...v, initial_balance: num(v.initial_balance), active: num(v.active), currency: 'VND' }),
+    onDelete: isNew ? null : async () => {
+      if (S.Transactions.some(t => t.account_id === a.id || t.to_account_id === a.id)) throw new Error('Tài khoản đã có giao dịch — hãy chuyển sang trạng thái Ẩn thay vì xóa');
+      await del('Accounts', a.id);
+    }
+  });
+}
+function debtForm(d) {
+  const isNew = !d; d = d || { id: uid(), date: todayStr(), direction: 'lend' };
+  openForm({
+    title: isNew ? 'Thêm khoản nợ' : 'Sửa khoản nợ', values: d,
+    fields: [
+      { k: 'direction', label: 'Loại', type: 'select', opts: [{ v: 'lend', l: 'Họ nợ tôi (tôi cho vay)' }, { v: 'borrow', l: 'Tôi nợ họ (tôi đi vay)' }] },
+      { k: 'person', label: 'Người / đơn vị', req: true },
+      { k: 'amount', label: 'Số tiền (₫)', type: 'number', req: true },
+      { k: 'date', label: 'Ngày phát sinh', type: 'date', req: true },
+      { k: 'due_date', label: 'Hạn trả (không bắt buộc)', type: 'date' },
+      { k: 'account_id', label: 'Tiền đi/đến tài khoản nào? (để trống = không ảnh hưởng số dư)', type: 'select', opts: accOpts('— Không ghi nhận vào tài khoản —') },
+      { k: 'note', label: 'Ghi chú', type: 'textarea' }
+    ],
+    onSave: v => save('Debts', { ...d, ...v }),
+    onDelete: isNew ? null : () => del('Debts', d.id)
+  });
+}
+function payForm(d, p) {
+  const isNew = !p; p = p || { id: uid(), debt_id: d.id, date: todayStr(), amount: debtLeft(d), account_id: d.account_id || '' };
+  openForm({
+    title: (d.direction === 'lend' ? 'Nhận trả từ ' : 'Trả nợ cho ') + d.person, values: p,
+    fields: [
+      { k: 'amount', label: 'Số tiền (₫)', type: 'number', req: true },
+      { k: 'date', label: 'Ngày', type: 'date', req: true },
+      { k: 'account_id', label: 'Tài khoản', type: 'select', opts: accOpts('— Không ghi nhận vào tài khoản —') },
+      { k: 'note', label: 'Ghi chú', type: 'textarea' }
+    ],
+    onSave: v => save('DebtPayments', { ...p, ...v }),
+    onDelete: isNew ? null : () => del('DebtPayments', p.id)
+  });
+}
+function budgetForm(b) {
+  const isNew = !b; b = b || { id: uid() };
+  openForm({
+    title: isNew ? 'Thêm ngân sách tháng' : 'Sửa ngân sách', values: b,
+    fields: [
+      { k: 'category', label: 'Danh mục chi tiêu', type: 'select', opts: catsOf('expense').map(c => ({ v: c, l: c })), req: true },
+      { k: 'amount', label: 'Hạn mức mỗi tháng (₫)', type: 'number', req: true }
+    ],
+    onSave: async v => {
+      const dup = S.Budgets.find(x => x.category === v.category && x.id !== b.id);
+      if (dup) throw new Error('Danh mục này đã có ngân sách');
+      await save('Budgets', { ...b, ...v });
+    },
+    onDelete: isNew ? null : () => del('Budgets', b.id)
+  });
+}
+function recForm(r) {
+  if (!activeAccs().length) { toast('Hãy tạo tài khoản trước', true); go('acc'); return; }
+  const isNew = !r; r = r || { id: uid(), type: 'expense', frequency: 'monthly', start_date: todayStr(), active: 1, account_id: activeAccs()[0].id };
+  openForm({
+    title: isNew ? 'Thêm khoản định kỳ' : 'Sửa khoản định kỳ', values: r,
+    fields: [
+      { k: 'name', label: 'Tên (VD: Tiền nhà, Netflix, Lương)', req: true },
+      { k: 'type', label: 'Loại', type: 'select', opts: [{ v: 'expense', l: 'Chi tiêu' }, { v: 'income', l: 'Thu nhập' }] },
+      { k: 'amount', label: 'Số tiền (₫)', type: 'number', req: true },
+      { k: 'account_id', label: 'Tài khoản', type: 'select', opts: accOpts() },
+      { k: 'category', label: 'Danh mục', type: 'select', optsFn: v => catsOf(v.type === 'income' ? 'income' : 'expense').map(c => ({ v: c, l: c })), req: true },
+      { k: 'frequency', label: 'Chu kỳ', type: 'select', opts: [{ v: 'monthly', l: 'Hàng tháng' }, { v: 'weekly', l: 'Hàng tuần' }, { v: 'yearly', l: 'Hàng năm' }] },
+      { k: 'day', label: 'Ngày trong tháng (1-31, tháng ngắn tự lùi về ngày cuối)', type: 'number', show: v => v.frequency === 'monthly' },
+      { k: 'start_date', label: 'Bắt đầu từ ngày', type: 'date', req: true },
+      { k: 'end_date', label: 'Kết thúc (không bắt buộc)', type: 'date' },
+      { k: 'active', label: 'Trạng thái', type: 'select', opts: [{ v: 1, l: 'Đang chạy' }, { v: 0, l: 'Tạm dừng' }] },
+      { k: 'note', label: 'Ghi chú', type: 'textarea' }
+    ],
+    onSave: v => {
+      const day = v.frequency === 'monthly' ? (num(v.day) || Number(String(v.start_date).slice(8, 10))) : '';
+      return save('Recurring', { ...r, ...v, day, amount: num(v.amount), active: num(v.active) });
+    },
+    onDelete: isNew ? null : () => del('Recurring', r.id)
+  });
+}
+function catForm() {
+  openForm({
+    title: 'Thêm danh mục', values: { type: 'expense' },
+    fields: [{ k: 'name', label: 'Tên danh mục', req: true }, { k: 'type', label: 'Loại', type: 'select', opts: [{ v: 'expense', l: 'Chi tiêu' }, { v: 'income', l: 'Thu nhập' }] }],
+    onSave: async v => {
+      if (S.Categories.some(c => c.name === v.name && c.type === v.type)) throw new Error('Danh mục đã tồn tại');
+      await save('Categories', { id: uid(), name: v.name, type: v.type, icon: '' });
+    }
+  });
+}
+
+/* ============ VIEWS ============ */
+const TABS = [['dash', '📊 Tổng quan'], ['tx', '🧾 Giao dịch'], ['acc', '🏦 Tài khoản'], ['debt', '🤝 Sổ nợ'], ['bud', '🎯 Ngân sách'], ['rec', '🔁 Định kỳ'], ['set', '⚙️ Cài đặt']];
+function go(v) { ui.view = v; render(); window.scrollTo(0, 0); }
+function renderTabs() {
+  $('#tabs').innerHTML = TABS.map(([k, l]) => `<button class="tab ${ui.view === k ? 'on' : ''}" data-go="${k}">${l}</button>`).join('');
+}
+function killCharts() { charts.forEach(c => c.destroy()); charts = []; }
+function mkChart(id, cfgc) { const el = document.getElementById(id); if (!el || typeof Chart === 'undefined') return; charts.push(new Chart(el, cfgc)); }
+function monthNav() {
+  return `<div class="mnav"><button class="btn ghost sm" data-m="-1">‹</button><input type="month" id="mpick" value="${ui.month}"><button class="btn ghost sm" data-m="1">›</button></div>`;
+}
+function shiftMonth(d) { let [y, m] = ui.month.split('-').map(Number); m += d; while (m < 1) { m += 12; y--; } while (m > 12) { m -= 12; y++; } ui.month = y + '-' + pad(m); }
+
+function viewDash() {
+  const bal = balances(), accs = activeAccs();
+  const sumAcc = accs.reduce((s, a) => s + (bal[a.id] || 0), 0);
+  const { recv, pay } = debtTotals();
+  const net = sumAcc + recv - pay;
+  const ms = monthStats(ui.month), yr = ui.month.slice(0, 4), ys = monthStats(yr);
+  const sp = spentByCat(ui.month);
+  const buds = S.Budgets.map(b => ({ ...b, spent: sp[b.category] || 0 })).sort((a, b) => b.spent / (num(b.amount) || 1) - a.spent / (num(a.amount) || 1)).slice(0, 4);
+  return `
+  <div class="row sp wrap" style="margin-bottom:10px"><h2>Tổng quan</h2>${monthNav()}</div>
+  <div class="card" style="margin-bottom:12px">
+    <h3>Tổng tài sản ròng</h3><div class="big">${vnd(net)}</div>
+    <div class="row wrap mut" style="margin-top:6px;gap:14px">
+      <span>🏦 Tài khoản: <b>${vnd(sumAcc)}</b></span>
+      <span class="inc">⬇ Phải thu: <b>${vnd(recv)}</b></span>
+      <span class="exp">⬆ Phải trả: <b>${vnd(pay)}</b></span>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-bottom:12px">
+    <div class="card"><h3>Thu tháng ${ui.month.slice(5)}/${yr}</h3><div class="mid inc">${vnd(ms.inc)}</div></div>
+    <div class="card"><h3>Chi tháng ${ui.month.slice(5)}/${yr}</h3><div class="mid exp">${vnd(ms.exp)}</div></div>
+    <div class="card"><h3>Còn lại tháng này</h3><div class="mid ${ms.inc - ms.exp >= 0 ? 'inc' : 'exp'}">${vnd(ms.inc - ms.exp)}</div></div>
+    <div class="card"><h3>Thu năm ${yr}</h3><div class="mid inc">${vnd(ys.inc)}</div></div>
+    <div class="card"><h3>Chi năm ${yr}</h3><div class="mid exp">${vnd(ys.exp)}</div></div>
+    <div class="card"><h3>Tiết kiệm năm ${yr}</h3><div class="mid ${ys.inc - ys.exp >= 0 ? 'inc' : 'exp'}">${vnd(ys.inc - ys.exp)}</div>
+      <div class="mut">${ys.inc > 0 ? Math.round((ys.inc - ys.exp) / ys.inc * 100) + '% thu nhập' : ''}</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Thu / chi theo tháng — năm ${yr}</h3><div class="chartbox"><canvas id="cYear"></canvas></div></div>
+    <div class="card"><h3>Chi tiêu theo danh mục — ${ui.month.slice(5)}/${yr}</h3>${Object.keys(sp).length ? '<div class="chartbox"><canvas id="cCat"></canvas></div>' : '<div class="empty">Chưa có chi tiêu trong tháng này</div>'}</div>
+    <div class="card"><h3>Số dư tài khoản</h3>${accs.length ? accs.map(a => `<div class="item" data-act="accedit" data-id="${a.id}"><div class="l"><div class="t">${ACC_ICON[a.type] || ''} ${esc(a.name)}</div><div class="mut">${ACC_TYPES[a.type] || ''}</div></div><div class="r ${bal[a.id] < 0 ? 'exp' : ''}">${vnd(bal[a.id])}</div></div>`).join('') : '<div class="empty">Chưa có tài khoản. Vào tab Tài khoản để thêm.</div>'}</div>
+    <div class="card"><h3>Ngân sách tháng ${ui.month.slice(5)}/${yr}</h3>${buds.length ? buds.map(budBar).join('') : '<div class="empty">Chưa đặt ngân sách</div>'}
+    </div>
+  </div>`;
+}
+function budBar(b) {
+  const pct = num(b.amount) ? b.spent / num(b.amount) * 100 : 0;
+  const cls = pct >= 100 ? 'over' : pct >= 80 ? 'near' : '';
+  return `<div style="margin-bottom:12px"><div class="row sp"><b>${esc(b.category)}</b><span class="${pct >= 100 ? 'exp' : ''}">${vnd(b.spent)} / ${vnd(b.amount)}</span></div><div class="bar"><i class="${cls}" style="width:${Math.min(100, pct)}%"></i></div><div class="mut">${pct >= 100 ? 'Vượt ' + vnd(b.spent - num(b.amount)) : 'Còn ' + vnd(num(b.amount) - b.spent)} · ${Math.round(pct)}%</div></div>`;
+}
+function dashCharts() {
+  const yr = ui.month.slice(0, 4), inc = [], exp = [];
+  for (let m = 1; m <= 12; m++) { const s = monthStats(yr + '-' + pad(m)); inc.push(s.inc); exp.push(s.exp); }
+  const tick = cssv('--mut'), grid = cssv('--bd');
+  mkChart('cYear', { type: 'bar', data: { labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'], datasets: [{ label: 'Thu', data: inc, backgroundColor: cssv('--inc') }, { label: 'Chi', data: exp, backgroundColor: cssv('--exp') }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: tick } }, tooltip: { callbacks: { label: c => c.dataset.label + ': ' + vnd(c.parsed.y) } } }, scales: { x: { ticks: { color: tick }, grid: { display: false } }, y: { ticks: { color: tick, callback: v => nf.format(v / 1e6) + 'tr' }, grid: { color: grid } } } } });
+  const sp = spentByCat(ui.month), keys = Object.keys(sp);
+  if (keys.length) mkChart('cCat', { type: 'doughnut', data: { labels: keys, datasets: [{ data: keys.map(k => sp[k]), backgroundColor: ['#0f766e', '#2563eb', '#d97706', '#dc2626', '#7c3aed', '#db2777', '#059669', '#ea580c', '#0891b2', '#65a30d', '#6b7280'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: tick } }, tooltip: { callbacks: { label: c => c.label + ': ' + vnd(c.parsed) } } } } });
+}
+
+function viewTx() {
+  const f = ui.f, q = f.q.toLowerCase();
+  let list = S.Transactions.filter(t => String(t.date).startsWith(ui.month) && (!f.acc || t.account_id === f.acc || t.to_account_id === f.acc) && (!f.type || t.type === f.type) && (!q || (t.note + ' ' + t.category).toLowerCase().includes(q)));
+  list.sort((a, b) => String(b.date).localeCompare(String(a.date)) || String(b.created_at).localeCompare(String(a.created_at)));
+  const st = monthStats(ui.month);
+  let html = `<div class="row sp wrap" style="margin-bottom:10px"><h2>Giao dịch</h2>${monthNav()}</div>
+  <div class="card" style="margin-bottom:12px"><div class="row wrap">
+    <select class="inline" id="fAcc"><option value="">Tất cả tài khoản</option>${optHtml(S.Accounts.map(a => ({ v: a.id, l: a.name })), f.acc)}</select>
+    <select class="inline" id="fType">${optHtml([{ v: '', l: 'Thu + Chi + Chuyển' }, { v: 'income', l: 'Thu' }, { v: 'expense', l: 'Chi' }, { v: 'transfer', l: 'Chuyển' }], f.type)}</select>
+    <input class="inline" id="fQ" placeholder="🔍 Tìm ghi chú / danh mục" value="${esc(f.q)}" style="flex:1;min-width:160px"></div>
+    <div class="row sp" style="margin-top:10px"><span class="inc">Thu: <b>${vnd(st.inc)}</b></span><span class="exp">Chi: <b>${vnd(st.exp)}</b></span></div></div>`;
+  if (!list.length) return html + '<div class="card empty">Không có giao dịch. Bấm nút + để thêm.</div>';
+  html += '<div class="card">';
+  let cur = '';
+  list.forEach(t => {
+    if (t.date !== cur) { cur = t.date; const d = new Date(t.date + 'T00:00:00'); html += `<div class="day">${d.toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit' })}</div>`; }
+    const a = accById(t.account_id), a2 = accById(t.to_account_id);
+    const sign = t.type === 'income' ? '+' : t.type === 'expense' ? '−' : '';
+    const cls = t.type === 'income' ? 'inc' : t.type === 'expense' ? 'exp' : '';
+    const title = t.type === 'transfer' ? `Chuyển: ${esc(a ? a.name : '?')} → ${esc(a2 ? a2.name : '?')}` : esc(t.category);
+    html += `<div class="item" data-act="txedit" data-id="${t.id}"><div class="l"><div class="t">${title}</div><div class="mut">${t.type !== 'transfer' ? esc(a ? a.name : '?') : ''}${t.note ? ' · ' + esc(t.note) : ''}</div></div><div class="r ${cls}">${sign}${vnd(t.amount)}</div></div>`;
+  });
+  return html + '</div>';
+}
+
+function viewAcc() {
+  const bal = balances();
+  const act = S.Accounts.filter(a => num(a.active) !== 0 || a.active === ''), hid = S.Accounts.filter(a => !(num(a.active) !== 0 || a.active === ''));
+  const total = act.reduce((s, a) => s + bal[a.id], 0);
+  const row = a => `<div class="item" data-act="accedit" data-id="${a.id}"><div class="l"><div class="t">${ACC_ICON[a.type] || ''} ${esc(a.name)}</div><div class="mut">${ACC_TYPES[a.type] || ''}${a.note ? ' · ' + esc(a.note) : ''}</div></div><div class="r ${bal[a.id] < 0 ? 'exp' : ''}">${vnd(bal[a.id])}</div></div>`;
+  return `<div class="row sp" style="margin-bottom:10px"><h2>Tài khoản</h2><button class="btn" data-act="accnew">+ Thêm</button></div>
+  <div class="card" style="margin-bottom:12px"><h3>Tổng số dư các tài khoản</h3><div class="big">${vnd(total)}</div></div>
+  <div class="card">${act.length ? act.map(row).join('') : '<div class="empty">Chưa có tài khoản nào. VD: MB Bank, Techcombank, Tiền mặt…</div>'}</div>
+  ${hid.length ? `<h3 class="mut" style="margin:16px 4px 6px">Đã ẩn</h3><div class="card">${hid.map(row).join('')}</div>` : ''}`;
+}
+
+function viewDebt() {
+  const { recv, pay } = debtTotals();
+  const sec = (dir, title, cls) => {
+    const list = S.Debts.filter(d => d.direction === dir).sort((a, b) => (debtLeft(b) > 0) - (debtLeft(a) > 0) || String(b.date).localeCompare(String(a.date)));
+    return `<div class="card"><h3>${title}</h3>${list.length ? list.map(d => {
+      const left = debtLeft(d), paid = debtPaid(d.id), pct = num(d.amount) ? paid / num(d.amount) * 100 : 0;
+      const ps = S.DebtPayments.filter(p => p.debt_id === d.id).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      const late = left > 0 && d.due_date && d.due_date < todayStr();
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--bd)">
+        <div class="row sp"><div class="t" data-act="debtedit" data-id="${d.id}" style="cursor:pointer;font-weight:700">${esc(d.person)} ${left === 0 ? '<span class="chip">Đã xong</span>' : ''}${late ? '<span class="chip exp">Quá hạn</span>' : ''}</div><b class="${left > 0 ? cls : 'mut'}">${vnd(left)}</b></div>
+        <div class="mut">Gốc ${vnd(d.amount)} · ${d.date}${d.due_date ? ' · hạn ' + d.due_date : ''}${d.note ? ' · ' + esc(d.note) : ''}</div>
+        <div class="bar"><i style="width:${Math.min(100, pct)}%"></i></div>
+        ${ps.map(p => `<div class="mut" data-act="payedit" data-id="${p.id}" style="cursor:pointer;margin-top:4px">↳ ${p.date}: ${vnd(p.amount)}${p.note ? ' · ' + esc(p.note) : ''}</div>`).join('')}
+        ${left > 0 ? `<button class="btn sm ghost" style="margin-top:8px" data-act="paynew" data-id="${d.id}">${dir === 'lend' ? '+ Nhận trả' : '+ Trả nợ'}</button>` : ''}
+      </div>`;
+    }).join('') : '<div class="empty">Chưa có khoản nào</div>'}</div>`;
+  };
+  return `<div class="row sp" style="margin-bottom:10px"><h2>Sổ nợ</h2><button class="btn" data-act="debtnew">+ Thêm</button></div>
+  <div class="grid g3" style="margin-bottom:12px"><div class="card"><h3>Người khác nợ tôi</h3><div class="mid inc">${vnd(recv)}</div></div><div class="card"><h3>Tôi nợ người khác</h3><div class="mid exp">${vnd(pay)}</div></div><div class="card"><h3>Chênh lệch</h3><div class="mid ${recv - pay >= 0 ? 'inc' : 'exp'}">${vnd(recv - pay)}</div></div></div>
+  <div class="grid g2">${sec('lend', '🟢 Họ nợ tôi', 'inc')}${sec('borrow', '🔴 Tôi nợ họ', 'exp')}</div>`;
+}
+
+function viewBud() {
+  const sp = spentByCat(ui.month);
+  const list = S.Budgets.map(b => ({ ...b, spent: sp[b.category] || 0 }));
+  const tb = list.reduce((s, b) => s + num(b.amount), 0), ts = list.reduce((s, b) => s + b.spent, 0);
+  const unb = Object.keys(sp).filter(c => !S.Budgets.some(b => b.category === c));
+  return `<div class="row sp wrap" style="margin-bottom:10px"><h2>Ngân sách</h2><div class="row">${monthNav()}<button class="btn" data-act="budnew">+ Thêm</button></div></div>
+  <div class="card" style="margin-bottom:12px"><h3>Tổng ngân sách đã đặt</h3><div class="mid">${vnd(ts)} <span class="mut">/ ${vnd(tb)}</span></div></div>
+  <div class="card">${list.length ? list.map(b => `<div data-act="budedit" data-id="${b.id}" style="cursor:pointer">${budBar(b)}</div>`).join('') : '<div class="empty">Chưa đặt ngân sách. Bấm “+ Thêm” để giới hạn chi tiêu theo danh mục mỗi tháng.</div>'}</div>
+  ${unb.length ? `<div class="card" style="margin-top:12px"><h3>Chi tiêu chưa có ngân sách</h3>${unb.map(c => `<div class="row sp" style="padding:4px 0"><span>${esc(c)}</span><b>${vnd(sp[c])}</b></div>`).join('')}</div>` : ''}`;
+}
+
+function viewRec() {
+  const fq = { monthly: 'Hàng tháng', weekly: 'Hàng tuần', yearly: 'Hàng năm' };
+  return `<div class="row sp wrap" style="margin-bottom:10px"><h2>Chi phí định kỳ</h2><div class="row"><button class="btn ghost" data-act="recrun">▶ Chạy ngay</button><button class="btn" data-act="recnew">+ Thêm</button></div></div>
+  <div class="card mut" style="margin-bottom:12px">Hệ thống tự tạo giao dịch mỗi ngày (khoảng 1h sáng) cho các khoản đến hạn. Bấm “Chạy ngay” để tạo ngay các khoản đã đến hạn.</div>
+  <div class="card">${S.Recurring.length ? S.Recurring.map(r => {
+    const a = accById(r.account_id);
+    const when = r.frequency === 'monthly' ? `ngày ${r.day}` : r.frequency === 'weekly' ? '' : String(r.start_date).slice(5);
+    return `<div class="item" data-act="recedit" data-id="${r.id}"><div class="l"><div class="t">${esc(r.name)} ${num(r.active) === 0 ? '<span class="chip">Tạm dừng</span>' : ''}</div><div class="mut">${fq[r.frequency] || ''} ${when} · ${esc(r.category)} · ${esc(a ? a.name : '?')}${r.last_run ? ' · gần nhất ' + r.last_run : ''}</div></div><div class="r ${r.type === 'income' ? 'inc' : 'exp'}">${r.type === 'income' ? '+' : '−'}${vnd(r.amount)}</div></div>`;
+  }).join('') : '<div class="empty">Chưa có khoản định kỳ nào (tiền nhà, Netflix, lương…)</div>'}</div>`;
+}
+
+function viewSet() {
+  const cat = t => S.Categories.filter(c => c.type === t).map(c => `<span class="chip" style="margin:3px;padding:5px 10px;font-size:13px">${esc(c.name)} <a href="#" data-act="catdel" data-id="${c.id}" style="color:var(--exp);text-decoration:none">✕</a></span>`).join('');
+  return `<h2 style="margin-bottom:10px">Cài đặt</h2><div class="grid g2">
+  <div class="card"><h3>Kết nối Google Sheet</h3>
+    <label>URL Web App (Apps Script)</label><input id="sUrl" value="${esc(cfg.url || '')}" placeholder="https://script.google.com/macros/s/.../exec">
+    <label>API Token</label><input id="sTok" type="password" value="${esc(cfg.token || '')}">
+    <div class="row" style="margin-top:12px"><button class="btn" data-act="cfgsave">Lưu & kiểm tra</button><button class="btn ghost" data-act="logout">Xóa cấu hình trên máy này</button></div></div>
+  <div class="card"><h3>Danh mục</h3><div class="mut">Chi tiêu</div>${cat('expense')}<div class="mut" style="margin-top:8px">Thu nhập</div>${cat('income')}
+    <div style="margin-top:12px"><button class="btn sm" data-act="catnew">+ Thêm danh mục</button></div></div>
+  <div class="card"><h3>Sao lưu</h3><div class="mut" style="margin-bottom:8px">Dữ liệu gốc nằm ở Google Sheet của bạn. Có thể tải thêm bản JSON:</div><button class="btn ghost" data-act="export">⬇ Tải bản sao lưu JSON</button></div></div>`;
+}
+
+/* ============ RENDER ============ */
+function render() {
+  killCharts();
+  renderTabs();
+  const v = ui.view, el = $('#view');
+  el.innerHTML = ({ dash: viewDash, tx: viewTx, acc: viewAcc, debt: viewDebt, bud: viewBud, rec: viewRec, set: viewSet })[v]();
+  $('#fab').style.display = ['dash', 'tx'].includes(v) ? 'block' : 'none';
+  if (v === 'dash') dashCharts();
+}
+
+/* ============ SỰ KIỆN ============ */
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-go],[data-m],[data-act]'); if (!t) return;
+  if (t.dataset.go) return go(t.dataset.go);
+  if (t.dataset.m) { shiftMonth(Number(t.dataset.m)); return render(); }
+  const id = t.dataset.id, act = t.dataset.act;
+  if (act === 'catdel') e.preventDefault();
+  try {
+    switch (act) {
+      case 'txedit': return txForm(S.Transactions.find(x => x.id === id));
+      case 'accnew': return accForm();
+      case 'accedit': return accForm(accById(id));
+      case 'debtnew': return debtForm();
+      case 'debtedit': return debtForm(debtById(id));
+      case 'paynew': return payForm(debtById(id));
+      case 'payedit': { const p = S.DebtPayments.find(x => x.id === id); return payForm(debtById(p.debt_id), p); }
+      case 'budnew': return budgetForm();
+      case 'budedit': return budgetForm(S.Budgets.find(x => x.id === id));
+      case 'recnew': return recForm();
+      case 'recedit': return recForm(S.Recurring.find(x => x.id === id));
+      case 'recrun': { const r = await api('runRecurring'); toast('Đã tạo ' + r.created + ' giao dịch định kỳ'); return loadAll(true); }
+      case 'catnew': return catForm();
+      case 'catdel': { const c = S.Categories.find(x => x.id === id); if (confirm('Xóa danh mục "' + c.name + '"? (giao dịch cũ vẫn giữ nguyên)')) await del('Categories', id); return; }
+      case 'cfgsave': {
+        cfg = { url: $('#sUrl').value.trim(), token: $('#sTok').value.trim() };
+        localStorage.setItem('fin_cfg', JSON.stringify(cfg));
+        await api('ping'); toast('Kết nối thành công'); return loadAll();
+      }
+      case 'logout': if (confirm('Xóa URL, token và dữ liệu cache trên thiết bị này?')) { localStorage.removeItem('fin_cfg'); localStorage.removeItem('fin_cache'); location.reload(); } return;
+      case 'export': {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
+        a.download = 'tai-chinh-backup-' + todayStr() + '.json'; a.click(); return;
+      }
+    }
+  } catch (err) { toast(err.message, true); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'mpick' && t.value) { ui.month = t.value; render(); }
+  else if (t.id === 'fAcc') { ui.f.acc = t.value; render(); }
+  else if (t.id === 'fType') { ui.f.type = t.value; render(); }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'fQ') {
+    ui.f.q = e.target.value; const pos = e.target.selectionStart;
+    clearTimeout(input_t); input_t = setTimeout(() => { render(); const q = $('#fQ'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } }, 250);
+  }
+});
+let input_t;
+$('#fab').onclick = () => txForm();
+$('#btnReload').onclick = () => loadAll();
+
+/* ============ KHỞI ĐỘNG ============ */
+(function init() {
+  try { const c = JSON.parse(localStorage.getItem('fin_cache') || 'null'); if (c) KEYS.forEach(k => S[k] = c[k] || []); } catch (e) {}
+  if (!cfg.url || !cfg.token) {
+    ui.view = 'set'; render();
+    toast('Nhập URL Web App và token để bắt đầu');
+    return;
+  }
+  render(); loadAll();
+})();
+</script>
+</body>
+</html>
