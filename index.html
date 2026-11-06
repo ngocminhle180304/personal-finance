@@ -3,16 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f766e">
+<meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17202a" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tài chính">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Tài chính cá nhân</title>
 <style>
 :root{--bg:#f3f6f8;--card:#fff;--tx:#14202b;--mut:#6b7885;--bd:#e3e8ee;--pri:#0f766e;--onpri:#fff;--inc:#16a34a;--exp:#dc2626;--warn:#d97706;--sh:0 1px 3px rgba(0,0,0,.08);--inp:#fff}
 @media(prefers-color-scheme:dark){:root{--bg:#0d1318;--card:#17202a;--tx:#e8eef3;--mut:#8a99a8;--bd:#263340;--pri:#2dd4bf;--onpri:#06231f;--inc:#4ade80;--exp:#f87171;--warn:#fbbf24;--sh:none;--inp:#101820}}
 *{box-sizing:border-box}
-html,body{margin:0}
+html,body{margin:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+html{overscroll-behavior-y:none}
 body{font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:90px}
 h1,h2,h3{margin:0}
-header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--bd)}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--bd);padding-top:env(safe-area-inset-top)}
 .top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;max-width:1100px;margin:auto}
 .top h1{font-size:17px}
 .tabs{display:flex;gap:4px;overflow-x:auto;padding:0 10px 8px;max-width:1100px;margin:auto;scrollbar-width:none}
@@ -53,7 +63,7 @@ label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
 .fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;border:0;background:var(--pri);color:var(--onpri);font-size:30px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:30}
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:50}
 #modal.open{display:flex}
-.sheet{background:var(--card);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px}
+.sheet{background:var(--card);width:100%;max-width:520px;max-height:92vh;max-height:92dvh;overflow:auto;overscroll-behavior:contain;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
 @media(min-width:600px){#modal{align-items:center}.sheet{border-radius:18px}}
 .sheet form .row{margin-top:16px}
 #toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:9px 16px;border-radius:99px;font-size:14px;z-index:60;display:none;max-width:90%}
@@ -64,6 +74,33 @@ label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
 @keyframes ld{0%{transform:scaleX(.05);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}100%{transform:scaleX(0);transform-origin:right}}
 .mnav{display:flex;align-items:center;gap:6px}
 .mnav input{width:auto}
+/* ===== Mobile / app ===== */
+.bnav{display:none}
+.more .item{font-size:16px;padding:14px 4px}
+.install{display:none}
+@media(max-width:699px){
+  body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+  .tabs{display:none}
+  .top{padding:10px 14px}
+  main{margin-top:12px}
+  input,select,textarea{font-size:16px;padding:11px 12px}  /* >=16px: iOS không tự zoom khi chạm vào ô nhập */
+  .btn{padding:11px 16px}
+  .btn.sm{padding:7px 12px}
+  .item{padding:13px 4px}
+  .g2,.g3{grid-template-columns:1fr}
+  .g3.kpi{grid-template-columns:1fr 1fr}
+  .big{font-size:28px}
+  .chartbox{height:230px}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--bd);padding:4px 4px env(safe-area-inset-bottom)}
+  .bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;border:0;background:transparent;color:var(--mut);font:inherit;font-size:11px;font-weight:600;padding:6px 0 4px;cursor:pointer;min-height:52px}
+  .bnav button b{font-size:21px;line-height:1.2;filter:grayscale(1);opacity:.75}
+  .bnav button.on{color:var(--pri)}
+  .bnav button.on b{filter:none;opacity:1}
+  .fab{bottom:calc(76px + env(safe-area-inset-bottom))}
+  #toast{bottom:calc(146px + env(safe-area-inset-bottom))}
+  .sheet form .row.sp{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom));background:var(--card);padding:12px 0 4px;margin-bottom:-4px}
+}
+@media(display-mode:standalone){.install{display:none!important}}
 </style>
 </head>
 <body>
@@ -79,6 +116,7 @@ label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
 <button class="fab" id="fab" title="Thêm giao dịch">+</button>
 <div id="modal"></div>
 <div id="toast"></div>
+<nav class="bnav" id="bnav"></nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
@@ -112,9 +150,12 @@ let busy = 0;
 function spin(on) { busy += on ? 1 : -1; $('#loading').style.display = busy > 0 ? 'block' : 'none'; }
 async function api(action, payload = {}) {
   if (!cfg.url || !cfg.token) throw new Error('Chưa cấu hình URL / token');
+  if (!navigator.onLine) throw new Error('Đang offline — chưa lưu được, thử lại khi có mạng');
   spin(true);
   try {
-    const res = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ token: cfg.token, action, ...payload }) });
+    let res;
+    try { res = await fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ token: cfg.token, action, ...payload }) }); }
+    catch (e) { throw new Error('Không kết nối được máy chủ — kiểm tra mạng'); }
     const j = await res.json();
     if (!j.ok) throw new Error(j.error || 'Lỗi không xác định');
     return j.data;
@@ -126,7 +167,9 @@ function toast(msg, err) {
 }
 function persist() { try { localStorage.setItem('fin_cache', JSON.stringify(S)); } catch (e) {} }
 
+let lastSync = 0;
 async function loadAll(silent) {
+  lastSync = Date.now();
   try {
     const d = await api('getAll');
     KEYS.forEach(k => S[k] = d[k] || []);
@@ -377,9 +420,20 @@ function catForm() {
 
 /* ============ VIEWS ============ */
 const TABS = [['dash', '📊 Tổng quan'], ['tx', '🧾 Giao dịch'], ['acc', '🏦 Tài khoản'], ['debt', '🤝 Sổ nợ'], ['bud', '🎯 Ngân sách'], ['rec', '🔁 Định kỳ'], ['set', '⚙️ Cài đặt']];
-function go(v) { ui.view = v; render(); window.scrollTo(0, 0); }
+function go(v) { closeModal(); ui.view = v; render(); window.scrollTo(0, 0); }
+const BNAV = [['dash', '📊', 'Tổng quan'], ['tx', '🧾', 'Giao dịch'], ['acc', '🏦', 'Tài khoản'], ['debt', '🤝', 'Sổ nợ'], ['more', '☰', 'Thêm']];
+const MORE = ['bud', 'rec', 'set'];
 function renderTabs() {
   $('#tabs').innerHTML = TABS.map(([k, l]) => `<button class="tab ${ui.view === k ? 'on' : ''}" data-go="${k}">${l}</button>`).join('');
+  $('#bnav').innerHTML = BNAV.map(([k, i, l]) => {
+    const on = k === 'more' ? MORE.includes(ui.view) : ui.view === k;
+    return `<button class="${on ? 'on' : ''}" ${k === 'more' ? 'data-act="more"' : `data-go="${k}"`}><b>${i}</b>${l}</button>`;
+  }).join('');
+}
+function moreSheet() {
+  const m = $('#modal');
+  m.innerHTML = `<div class="sheet more"><h3 style="margin-bottom:4px">Thêm</h3>${TABS.filter(([k]) => MORE.includes(k)).map(([k, l]) => `<div class="item" data-go="${k}"><div class="t">${l}</div><div class="mut">›</div></div>`).join('')}</div>`;
+  m.classList.add('open');
 }
 function killCharts() { charts.forEach(c => c.destroy()); charts = []; }
 function mkChart(id, cfgc) { const el = document.getElementById(id); if (!el || typeof Chart === 'undefined') return; charts.push(new Chart(el, cfgc)); }
@@ -406,7 +460,7 @@ function viewDash() {
       <span class="exp">⬆ Phải trả: <b>${vnd(pay)}</b></span>
     </div>
   </div>
-  <div class="grid g3" style="margin-bottom:12px">
+  <div class="grid g3 kpi" style="margin-bottom:12px">
     <div class="card"><h3>Thu tháng ${ui.month.slice(5)}/${yr}</h3><div class="mid inc">${vnd(ms.inc)}</div></div>
     <div class="card"><h3>Chi tháng ${ui.month.slice(5)}/${yr}</h3><div class="mid exp">${vnd(ms.exp)}</div></div>
     <div class="card"><h3>Còn lại tháng này</h3><div class="mid ${ms.inc - ms.exp >= 0 ? 'inc' : 'exp'}">${vnd(ms.inc - ms.exp)}</div></div>
@@ -493,7 +547,7 @@ function viewDebt() {
     }).join('') : '<div class="empty">Chưa có khoản nào</div>'}</div>`;
   };
   return `<div class="row sp" style="margin-bottom:10px"><h2>Sổ nợ</h2><button class="btn" data-act="debtnew">+ Thêm</button></div>
-  <div class="grid g3" style="margin-bottom:12px"><div class="card"><h3>Người khác nợ tôi</h3><div class="mid inc">${vnd(recv)}</div></div><div class="card"><h3>Tôi nợ người khác</h3><div class="mid exp">${vnd(pay)}</div></div><div class="card"><h3>Chênh lệch</h3><div class="mid ${recv - pay >= 0 ? 'inc' : 'exp'}">${vnd(recv - pay)}</div></div></div>
+  <div class="grid g3 kpi" style="margin-bottom:12px"><div class="card"><h3>Người khác nợ tôi</h3><div class="mid inc">${vnd(recv)}</div></div><div class="card"><h3>Tôi nợ người khác</h3><div class="mid exp">${vnd(pay)}</div></div><div class="card"><h3>Chênh lệch</h3><div class="mid ${recv - pay >= 0 ? 'inc' : 'exp'}">${vnd(recv - pay)}</div></div></div>
   <div class="grid g2">${sec('lend', '🟢 Họ nợ tôi', 'inc')}${sec('borrow', '🔴 Tôi nợ họ', 'exp')}</div>`;
 }
 
@@ -528,6 +582,9 @@ function viewSet() {
     <div class="row" style="margin-top:12px"><button class="btn" data-act="cfgsave">Lưu & kiểm tra</button><button class="btn ghost" data-act="logout">Xóa cấu hình trên máy này</button></div></div>
   <div class="card"><h3>Danh mục</h3><div class="mut">Chi tiêu</div>${cat('expense')}<div class="mut" style="margin-top:8px">Thu nhập</div>${cat('income')}
     <div style="margin-top:12px"><button class="btn sm" data-act="catnew">+ Thêm danh mục</button></div></div>
+  <div class="card install" id="installCard"><h3>📲 Cài app lên điện thoại</h3>
+    <div class="mut" id="installTxt">${installHelp()}</div>
+    ${deferredInstall ? '<button class="btn" style="margin-top:10px" data-act="install">Cài đặt</button>' : ''}</div>
   <div class="card"><h3>Sao lưu</h3><div class="mut" style="margin-bottom:8px">Dữ liệu gốc nằm ở Google Sheet của bạn. Có thể tải thêm bản JSON:</div><button class="btn ghost" data-act="export">⬇ Tải bản sao lưu JSON</button></div></div>`;
 }
 
@@ -539,6 +596,7 @@ function render() {
   el.innerHTML = ({ dash: viewDash, tx: viewTx, acc: viewAcc, debt: viewDebt, bud: viewBud, rec: viewRec, set: viewSet })[v]();
   $('#fab').style.display = ['dash', 'tx'].includes(v) ? 'block' : 'none';
   if (v === 'dash') dashCharts();
+  const ic = $('#installCard'); if (ic && !isStandalone()) ic.style.display = 'block';
 }
 
 /* ============ SỰ KIỆN ============ */
@@ -550,6 +608,8 @@ document.addEventListener('click', async e => {
   if (act === 'catdel') e.preventDefault();
   try {
     switch (act) {
+      case 'more': return moreSheet();
+      case 'install': return doInstall();
       case 'txedit': return txForm(S.Transactions.find(x => x.id === id));
       case 'accnew': return accForm();
       case 'accedit': return accForm(accById(id));
@@ -593,6 +653,32 @@ document.addEventListener('input', e => {
 let input_t;
 $('#fab').onclick = () => txForm();
 $('#btnReload').onclick = () => loadAll();
+
+/* ============ PWA ============ */
+let deferredInstall = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function installHelp() {
+  if (deferredInstall) return 'Bấm nút bên dưới để thêm app vào màn hình chính. App sẽ mở toàn màn hình như ứng dụng thật.';
+  if (isIOS()) return 'Trên iPhone/iPad: mở trang này bằng <b>Safari</b> → bấm nút <b>Chia sẻ</b> (ô vuông có mũi tên lên) → <b>Thêm vào MH chính</b>.';
+  return 'Trên Android (Chrome): bấm menu <b>⋮</b> → <b>Cài đặt ứng dụng</b> / <b>Thêm vào màn hình chính</b>.';
+}
+async function doInstall() {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  await deferredInstall.userChoice.catch(() => {});
+  deferredInstall = null; render();
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; if (ui.view === 'set') render(); });
+window.addEventListener('appinstalled', () => { deferredInstall = null; toast('Đã cài app'); });
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+// App mở lâu ở nền: quay lại thì tự đồng bộ (tối đa 1 lần / phút)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && cfg.url && cfg.token && Date.now() - lastSync > 60000) loadAll(true);
+});
+window.addEventListener('online', () => { if (cfg.url && cfg.token) loadAll(true); });
 
 /* ============ KHỞI ĐỘNG ============ */
 (function init() {
