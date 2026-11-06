@@ -26,13 +26,24 @@ Google Apps Script Web App (Code.gs)  ──►  Google Sheet (database của b�
 
 ## Bước 3 — Đưa giao diện lên GitHub Pages
 
-1. Tạo repo GitHub mới (vd. `tai-chinh`), upload `index.html` lên nhánh `main`.
+1. Tạo repo GitHub mới (vd. `tai-chinh`), upload `index.html`, `manifest.webmanifest`, `sw.js` và thư mục `icons/` lên nhánh `main`.
 2. **Settings → Pages → Source: Deploy from a branch → `main` / `(root)` → Save**.
 3. Sau ~1 phút truy cập `https://<username>.github.io/tai-chinh/`.
 
 ## Bước 4 — Kết nối
 
-Mở trang → tab **Cài đặt** → dán **URL Web App** và **Token** → *Lưu & kiểm tra*. Cấu hình lưu trong trình duyệt của thiết bị đó (mỗi điện thoại/máy tính nhập 1 lần). Trên điện thoại: *Thêm vào màn hình chính* để dùng như app.
+Mở trang → tab **Cài đặt** → dán **URL Web App** và **Token** → *Lưu & kiểm tra*. Cấu hình lưu trên thiết bị đó (mỗi điện thoại/máy tính nhập 1 lần).
+
+## Bước 5 — Cài app lên điện thoại (PWA)
+
+App là PWA: cài lên màn hình chính, mở toàn màn hình như app thật, không cần App Store / Google Play.
+
+- **iPhone / iPad**: mở link bằng **Safari** → nút **Chia sẻ** → **Thêm vào MH chính** → Thêm.
+- **Android**: mở bằng **Chrome** → menu **⋮** → **Cài đặt ứng dụng** (hoặc bấm nút *Cài đặt* trong tab Cài đặt của app).
+
+> iPhone: app cài từ màn hình chính có bộ nhớ riêng, tách khỏi Safari, nên phải **nhập URL + token lại một lần** bên trong app.
+
+Trên điện thoại, các tab nằm ở thanh dưới đáy (Ngân sách, Định kỳ, Cài đặt nằm trong mục **Thêm**). Khi mất mạng app vẫn mở được và hiển thị dữ liệu lần đồng bộ gần nhất, nhưng không thêm/sửa được; có mạng lại thì app tự đồng bộ.
 
 Thứ tự bắt đầu gợi ý: tạo **Tài khoản** (MB, Tech, Tiền mặt...) với số dư hiện tại → thêm giao dịch bằng nút `+`.
 
@@ -65,4 +76,5 @@ Thứ tự bắt đầu gợi ý: tạo **Tài khoản** (MB, Tech, Tiền mặt
 | `Sai token (Unauthorized)` | Token sai/thừa khoảng trắng; chạy `showToken()` lấy lại. |
 | Báo lỗi mạng / không tải được | Kiểm tra Web App đã deploy *Anyone*, URL kết thúc `/exec`; sau khi sửa code nhớ tạo *New version*. |
 | `Chưa có sheet ...` | Chạy `setup()`. |
+| App trên điện thoại không thấy bản mới | Đóng hẳn app rồi mở lại (cần có mạng). App luôn lấy bản mới khi có mạng, chỉ dùng bản lưu khi offline. |
 | Chi phí định kỳ không tự chạy | Kiểm tra Triggers (⏰) có `processRecurring`; hoặc bấm **Chạy ngay** ở tab Định kỳ. |

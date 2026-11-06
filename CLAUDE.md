@@ -14,6 +14,9 @@ Yêu cầu gốc: nhiều tài khoản (MB, Techcombank, tiền mặt…), sổ 
 
 ```
 index.html            # toàn bộ frontend (HTML+CSS+JS trong 1 file), Pages phục vụ file này ở gốc
+manifest.webmanifest  # PWA manifest (tên app, icon, display standalone)
+sw.js                 # service worker: offline cho app shell + Chart.js; KHÔNG cache request tới Apps Script
+icons/                # icon PWA (192, 512, maskable 512, apple-touch-icon 180, favicon 32)
 apps-script/Code.gs   # backend, owner dán vào Apps Script (KHÔNG chạy trên GitHub)
 README.md             # hướng dẫn cho người dùng cuối (setup 4 bước, cách tính, xử lý sự cố)
 CLAUDE.md             # file này
@@ -68,3 +71,5 @@ Sau khi deploy xong, nhắc owner các việc đó, đừng cố làm thay. Ch�
 - Sửa `apps-script/Code.gs` xong owner phải: dán lại vào Apps Script → *Deploy → Manage deployments → ✎ → New version* (URL giữ nguyên). Nhắc điều này mỗi khi bạn đổi backend.
 - Đổi cột trong `SHEETS` ở `Code.gs` thì phải xem lại sheet đã tạo, vì `setup()` chỉ ghi header khi sheet trống.
 - Giữ frontend ở 1 file, escape mọi chuỗi người dùng bằng `esc()` khi nhét vào HTML.
+- App là PWA, ưu tiên mobile: dưới 700px dùng thanh tab dưới đáy (`#bnav`, mục *Thêm* chứa Ngân sách/Định kỳ/Cài đặt), từ 700px trở lên dùng tab trên cùng. Ô nhập trên mobile phải ≥ 16px để iOS không tự zoom. Nhớ tính `env(safe-area-inset-*)` cho phần tử cố định.
+- `sw.js`: trang tải theo kiểu network-first nên sửa `index.html` thì không cần làm gì. Sửa icon/manifest hoặc đổi phiên bản Chart.js thì phải tăng `CACHE` (vd. `taichinh-v2`) và cập nhật hằng `CDN`.
