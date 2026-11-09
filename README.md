@@ -63,6 +63,12 @@ Thứ tự bắt đầu gợi ý: tạo **Tài khoản** (MB, Tech, Tiền mặt
 - **Ngân sách**: hạn mức theo danh mục, tính trên chi tiêu của tháng đang chọn; cam khi ≥ 80%, đỏ khi vượt.
 - **Định kỳ**: monthly / weekly / yearly; tháng không có ngày 31 thì lùi về ngày cuối tháng. Giao dịch tạo ra có ghi chú `[Định kỳ]`, không bao giờ tạo trùng.
 
+## Sổ nợ theo người
+
+Mỗi người trong sổ nợ được gom lại như một tài khoản công nợ: tab **Sổ nợ** liệt kê từng người với số họ đang nợ bạn (xanh) hoặc bạn đang nợ họ (đỏ). Bấm vào một người để xem lịch sử cho vay / trả, số dư sau mỗi lần, và các nút **Nhận trả**, **Cho vay thêm**, **Mượn thêm**. Khi nhận trả, số tiền tự trừ vào khoản cũ nhất trước.
+
+Tên được gộp không phân biệt hoa thường ("Nam" và "nam" là một người); khi nhập khoản mới hãy chọn tên trong danh sách gợi ý để khỏi bị tách.
+
 ## Bảo mật
 
 - Web App phải để *Anyone* thì GitHub Pages mới gọi được, nên **token là lớp bảo vệ duy nhất**: không commit token lên GitHub, không chia sẻ URL + token. Muốn đổi token: Project Settings → Script properties → sửa `API_TOKEN` rồi nhập lại token trên các thiết bị.
